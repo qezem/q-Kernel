@@ -1,5 +1,6 @@
 [bits 16]
-[org 0x8000]
+
+global start
 
 start:
   xor ax, ax
@@ -43,10 +44,8 @@ start_protected_mode:
 
   mov esp, 0x9000
 
-  mov al, 'A'
-  mov ah, 0x0f
-
-  mov [0xb8000], ax
+  extern kmain
+  call kmain
 
   jmp $
 
