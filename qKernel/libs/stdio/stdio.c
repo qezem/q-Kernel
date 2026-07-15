@@ -1,28 +1,50 @@
 #include "stdio.h"
 #include "drivers/VGA_driver/vga.h"
 #include <stdarg.h>
+#include <stddef.h>
 
-void printf(const char *format, ...) {
+int printf(const char *format, ...) {
+  if (format == NULL) {
+    return EOF;
+  }
+
   va_list ap;
   va_start(ap, format);
 
-  int sum = 0;
+  int count = 0;
 
   for (int i = 0; format[i] != '\0'; ++i) {
     if (format[i] == '%') {
       ++i;
 
-      if (format[i] == 'd') {
-        kprint_int(va_arg(ap, int));
+      if (format[i] == 'd' || format[i] == 'i') {
+        count += kprint_int(va_arg(ap, int));
       } else if (format[i] == 'c') {
         kprint_char((char)va_arg(ap, int));
+        ++count;
+        ++count;
       } else if (format[i] == 's') {
-        kprint_string(va_arg(ap, char *));
+        count += kprint_string(va_arg(ap, char *));
       }
     } else {
       kprint_char(format[i]);
+      ++count;
     }
   }
 
   va_end(ap);
+
+  return count;
+}
+
+int putchar(int character) {
+  kprint_char((char)character);
+  return character;
+}
+
+int puts(const char *str) {
+  kprint_string(str);
+  kprint_char('\n');
+
+  return 0;
 }

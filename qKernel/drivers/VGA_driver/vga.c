@@ -6,12 +6,9 @@ static char *video_mem = (char *)0xb8000;
 
 static int cursor = 0;
 
-const uint8_t VGA_WIDTH = 80;
-const uint8_t VGA_HEIGHT = 25;
-
-const unsigned char text_color = 0x0f;
-
-void move_to_the_next_line(void) { cursor = (cursor / (80 * 2) + 1) * 80 * 2; }
+void move_to_the_next_line(void) {
+  cursor = (cursor / (VGA_WIDTH * 2) + 1) * VGA_WIDTH * 2;
+}
 
 void update_cursor(void) {
   int pos = cursor / 2;
@@ -40,7 +37,7 @@ void kprint_char(char c) {
     move_to_the_next_line();
   } else {
     video_mem[cursor] = c;
-    video_mem[cursor + 1] = text_color;
+    video_mem[cursor + 1] = TEXT_COLOR;
     cursor += 2;
   }
 
@@ -51,28 +48,49 @@ void kprint_char(char c) {
   update_cursor();
 }
 
-void kprint_int(int num) {
+int kprint_int(int num) {
+  int count = 0;
+
   if (num == 0) {
     kprint_char('0');
+    update_cursor();
+
+    return 1;
   }
 
   char buffer[12];
   int i = 0;
 
-  while (num > 0) {
-    buffer[i++] = (num % 10) + '0';
-    num = num / 10;
+  unsigned int abs_num = num;
+
+  if (num < 0) {
+    kprint_char('-');
+    ++count;
+    abs_num = -num;
+  }
+
+  while (abs_num > 0) {
+    buffer[i++] = (abs_num % 10) + '0';
+    abs_num = abs_num / 10;
   }
 
   while (i > 0) {
     kprint_char(buffer[--i]);
+    ++count;
   }
 
   update_cursor();
+
+  return count;
 }
 
-void kprint_string(const char *str) {
+int kprint_string(const char *str) {
+  int count = 0;
+
   for (int i = 0; str[i] != '\0'; ++i) {
     kprint_char(str[i]);
+    ++count;
   }
+
+  return count;
 }

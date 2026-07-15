@@ -3,4 +3,8 @@
 #include "../../drivers/VGA_driver/vga.h"
 #include <stdint.h>
 
-void printf(const char *format, ...);
+#define EOF (-1)
+
+int printf(const char *format, ...);
+int puts(const char *str);
+int putchar(int character);

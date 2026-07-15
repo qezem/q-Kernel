@@ -26,7 +26,7 @@ load:
   mov bx, 0x0000
 
   mov ah, 0x02
-  mov al, 0x03
+  mov al, 0x04
   mov ch, 0x00
   mov cl, 0x02
   mov dh, 0x00
