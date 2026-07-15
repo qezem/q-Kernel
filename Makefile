@@ -47,7 +47,7 @@ clean:
 	rm -rf $(BUILD_DIR) qKernel.img
 
 run: all
-	$(QEMU) -drive format=raw,file=qKernel.img
+	$(QEMU) -drive format=raw,file=qKernel.img -serial stdio
 
 .PHONY: all run clean
 
