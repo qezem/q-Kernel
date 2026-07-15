@@ -1,5 +1,5 @@
-#include "stdio.h"
-#include "drivers/VGA_driver/vga.h"
+#include "libs/stdio.h"
+#include "drivers/vga.h"
 #include <stdarg.h>
 #include <stddef.h>
 

@@ -1,4 +1,4 @@
-#include "serial.h"
+#include "drivers/serial.h"
 #include "libs/io.h"
 
 int init_serial(void) {

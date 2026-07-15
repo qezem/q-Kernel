@@ -1,5 +1,5 @@
-#include "vga.h"
-#include "../../libs/io.h"
+#include "drivers/vga.h"
+#include "libs/io.h"
 #include <stdint.h>
 
 static char *video_mem = (char *)0xb8000;

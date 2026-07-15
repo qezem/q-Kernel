@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../drivers/VGA_driver/vga.h"
+#include "drivers/vga.h"
 #include <stdint.h>
 
 #define EOF (-1)

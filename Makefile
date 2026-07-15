@@ -11,25 +11,29 @@ BIN_DIR 	= $(BUILD_DIR)/bin
 ELF_DIR 	= $(BUILD_DIR)/elf
 OBJ_DIR 	= $(BUILD_DIR)/obj
 
-#FLAGS
-CC_FLAGS = -m32 -ffreestanding -fno-pie -fno-stack-protector -nostdlib -I ./qKernel/ -c
+#ASM FILES
+BOOT	= ./qKernel/boot/boot.asm
+ENTRY = ./qKernel/src/entry.asm
 
-C_SOURCES = $(shell find ./qKernel -name "*.c")
-C_OBJECTS = $(patsubst ./qKernel/%,$(OBJ_DIR)/%,$(C_SOURCES:.c=.o))
+#FLAGS
+CC_FLAGS = -m32 -ffreestanding -fno-pie -fno-stack-protector -nostdlib -I ./qKernel/include/ -c
+
+C_SOURCES = $(shell find ./qKernel/src -name "*.c")
+C_OBJECTS = $(patsubst ./qKernel/src/%,$(OBJ_DIR)/%,$(C_SOURCES:.c=.o))
 
 OBJS = $(OBJ_DIR)/entry.o $(C_OBJECTS)
 
 all: qKernel.img
 
-$(BIN_DIR)/boot.bin: ./qKernel/boot.asm
+$(BIN_DIR)/boot.bin: $(BOOT)
 	mkdir -p $(BIN_DIR)
 	$(ASM) -f bin $< -o $@
 
-$(OBJ_DIR)/entry.o: ./qKernel/entry.asm
+$(OBJ_DIR)/entry.o: $(ENTRY)
 	mkdir -p $(OBJ_DIR)
 	$(ASM) -f elf32 -i ./qKernel/ $< -o $@
 
-$(OBJ_DIR)/%.o: ./qKernel/%.c
+$(OBJ_DIR)/%.o: ./qKernel/src/%.c
 	mkdir -p $(@D)
 	$(CC) $(CC_FLAGS) $< -o $@
 
