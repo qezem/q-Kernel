@@ -14,6 +14,7 @@ OBJ_DIR 	= $(BUILD_DIR)/obj
 #ASM FILES
 BOOT	= ./qKernel/boot/boot.asm
 ENTRY = ./qKernel/src/entry.asm
+ISR 	= ./qKernel/src/isr_asm.asm
 
 #FLAGS
 CC_FLAGS = -m32 -ffreestanding -fno-pie -fno-stack-protector -nostdlib -I ./qKernel/include/ -c
@@ -21,7 +22,7 @@ CC_FLAGS = -m32 -ffreestanding -fno-pie -fno-stack-protector -nostdlib -I ./qKer
 C_SOURCES = $(shell find ./qKernel/src -name "*.c")
 C_OBJECTS = $(patsubst ./qKernel/src/%,$(OBJ_DIR)/%,$(C_SOURCES:.c=.o))
 
-OBJS = $(OBJ_DIR)/entry.o $(C_OBJECTS)
+OBJS = $(OBJ_DIR)/entry.o $(OBJ_DIR)/isr_asm.o $(C_OBJECTS)
 
 all: qKernel.img
 
@@ -30,6 +31,10 @@ $(BIN_DIR)/boot.bin: $(BOOT)
 	$(ASM) -f bin $< -o $@
 
 $(OBJ_DIR)/entry.o: $(ENTRY)
+	mkdir -p $(OBJ_DIR)
+	$(ASM) -f elf32 -i ./qKernel/ $< -o $@
+
+$(OBJ_DIR)/isr_asm.o: $(ISR)
 	mkdir -p $(OBJ_DIR)
 	$(ASM) -f elf32 -i ./qKernel/ $< -o $@
 

@@ -6,6 +6,15 @@ static char *video_mem = (char *)0xb8000;
 
 static int cursor = 0;
 
+void clear_buffer(void) {
+  uint16_t *vga_ptr = (uint16_t *)video_mem;
+
+  for (int i = 0; i < 2000; ++i) {
+    vga_ptr[i] = 0x20 | 0x0f;
+  }
+  cursor = 0;
+}
+
 void move_to_the_next_line(void) {
   cursor = (cursor / (VGA_WIDTH * 2) + 1) * VGA_WIDTH * 2;
 }
