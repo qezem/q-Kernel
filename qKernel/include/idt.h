@@ -2,8 +2,6 @@
 
 #include <stdint.h>
 
-typedef enum { IDT_SUCCESS, IDT_ERR_PTR_INVALID } idt_status;
-
 struct idt_entry {
   uint16_t offset_low;
   uint16_t selector;
@@ -17,4 +15,4 @@ struct idt_ptr {
   uint32_t base;
 } __attribute__((packed));
 
-idt_status idt_init(void);
+void idt_init(void);

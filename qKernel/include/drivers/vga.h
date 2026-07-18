@@ -7,5 +7,6 @@
 void clear_buffer(void);
 
 void kprint_char(char c);
+void kprint_hex(unsigned char hex);
 int kprint_int(int num);
 int kprint_string(const char *str);

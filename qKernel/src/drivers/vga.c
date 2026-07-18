@@ -5,6 +5,9 @@
 static char *video_mem = (char *)0xb8000;
 
 static int cursor = 0;
+static int cur_line = 0;
+
+static int cursor_buffer[25] = {0};
 
 void clear_buffer(void) {
   uint16_t *vga_ptr = (uint16_t *)video_mem;
@@ -17,6 +20,7 @@ void clear_buffer(void) {
 
 void move_to_the_next_line(void) {
   cursor = (cursor / (VGA_WIDTH * 2) + 1) * VGA_WIDTH * 2;
+  ++cur_line;
 }
 
 void update_cursor(void) {
@@ -25,6 +29,27 @@ void update_cursor(void) {
   outb(0x3d5, (uint8_t)(pos & 0xff));
   outb(0x3d4, 0x0e);
   outb(0x3d5, (uint8_t)((pos >> 8) & 0xff));
+}
+
+void remove_char(void) {
+  if (cursor <= 0 && cur_line == 0)
+    return;
+
+  if (cursor % (VGA_WIDTH * 2) == 0) {
+    --cur_line;
+    cursor = cursor_buffer[cur_line];
+    video_mem[cursor] = ' ';
+    video_mem[cursor + 1] = TEXT_COLOR;
+    update_cursor();
+    return;
+  }
+
+  cursor -= 2;
+  video_mem[cursor] = ' ';
+  video_mem[cursor + 1] = TEXT_COLOR;
+
+  cursor_buffer[cur_line] = cursor;
+  update_cursor();
 }
 
 void scroll_screen(void) {
@@ -39,22 +64,36 @@ void scroll_screen(void) {
   }
 
   cursor = (VGA_HEIGHT - 1) * VGA_WIDTH * 2;
+  cur_line = VGA_HEIGHT - 1;
 }
 
 void kprint_char(char c) {
   if (c == '\n') {
     move_to_the_next_line();
+  } else if (c == '\b') {
+    remove_char();
   } else {
     video_mem[cursor] = c;
     video_mem[cursor + 1] = TEXT_COLOR;
     cursor += 2;
+
+    if (cursor % (VGA_WIDTH * 2) == 0) {
+      ++cur_line;
+    }
   }
 
   if (cursor >= VGA_HEIGHT * VGA_WIDTH * 2) {
     scroll_screen();
   }
-
+  cursor_buffer[cur_line] = cursor;
   update_cursor();
+}
+
+void kprint_hex(unsigned char hex) {
+  char hex_chars[] = "0123456789abcdef";
+  kprint_char(hex_chars[(hex >> 4) & 0x0f]);
+  kprint_char(hex_chars[hex & 0x0f]);
+  kprint_char(' ');
 }
 
 int kprint_int(int num) {
