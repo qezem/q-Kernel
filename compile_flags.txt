@@ -1,0 +1,5 @@
+-std=c11
+-I./qKernel/include
+-I./qKernel/include/drivers
+-I./qKernel/include/libs
+
