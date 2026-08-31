@@ -72,6 +72,8 @@ void kprint_char(char c) {
     move_to_the_next_line();
   } else if (c == '\b') {
     remove_char();
+  } else if (c == '\t') {
+    kprint_string("    ");
   } else {
     video_mem[cursor] = c;
     video_mem[cursor + 1] = TEXT_COLOR;
